@@ -41,18 +41,21 @@ double linearInterpolation(double r0, double d0, double r1, double d1, double r,
     return ((r1 - r0)*(d - d0) / (d1 - d0)) + r0;
 }   
 
+// Calculate the drag force 
 double dragForce(double c, double p, double v, double a)
 {
     double d = (c * p * a * (v * v)) / 2;
     return d;
 }
 
+// Calculate the area of the circle
 double circleArea(double r)
 {
     double a = (r * r) * 3.14195;
     return a;
 }
 
+// Caculate Newton's Second Law of motion
 double secondNewton(double m, double a)
 {
     double f = m * a;
