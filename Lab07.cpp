@@ -16,6 +16,8 @@
 #include "uiDraw.h"     // for RANDOM and DRAW*
 #include "ground.h"     // for GROUND
 #include "position.h"   // for POSITION
+#include "physics.h"
+
 using namespace std;
 
 /*************************************************************************
@@ -154,11 +156,14 @@ int main(int argc, char** argv)
       "Demo",   /* name on the window */
       ptUpperRight);
 
-   // Initialize the demo
-   Demo demo(ptUpperRight);
+   Physics physics = Physics();
+   physics.computeDistance(75);
 
-   // set everything into action
-   ui.run(callBack, &demo);
+   //// Initialize the demo
+   //Demo demo(ptUpperRight);
+
+   //// set everything into action
+   //ui.run(callBack, &demo);
 
 
    return 0;
