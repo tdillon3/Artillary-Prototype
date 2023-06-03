@@ -1,44 +1,94 @@
 #pragma once
 #include <iostream>
 #include <cmath>
+#include <vector>
 using namespace std;
 #define  M_PI  3.1415926535897932384626433
 
 class Physics
 {
 private:
+
+    double ddx;
+    double ddy;
+    double mass = 46.7;
+    double distance = 0;
+    double lastDistance;
+    double altitude = 0;
+    double lastAltitude;
+    double hangTime = 0;
+    double t = 0.01;
+    double gravity;
+    double drag;
+    double dragCoefficient;
+    double airDensity;
+    double dragY;
+    double dragX;
+    double radius = 0.077445;
+    double totalVelocity = 827;
+    double mach;
+    double speedRelativeToMach;
+    vector<vector<double>> dragCoefficentList = 
+    { 
+        {0.3, 0.1629}, {0.5, 0.1659}, {0.7, 0.2031}, {0.89, 0.2597}, {0.92, 0.3010}, {0.96, 0.3287}, {0.980, 0.4002}, {1.0, 0.4258}, 
+        {1.02, 0.4335}, {1.06, 0.4483}, {1.24, 0.4064}, {1.53, 0.3663}, {1.99, 0.2897}, {2.87, 0.2297}, {2.89, 0.2306}, {5.0, 0.2656}
+    };
+    vector<vector<double>> speedOfSoundList = 
+    { 
+        {0, 340}, {1000, 336}, {2000, 332}, {3000, 328}, {4000, 324}, {5000, 320}, {6000, 316}, {7000, 312}, {8000, 308}, 
+        {9000, 303}, {10000, 299}, {15000, 295}, {20000, 295}, {25000, 295}, {30000, 305}, { 40000, 324}
+    };
+    vector<vector<double>> airDensityList = 
+    {
+        {0, 1.225}, {1000, 1.112}, {2000, 1.007}, {3000, 0.9093}, {4000, 0.8194}, {5000, 0.7364}, {6000, 0.6601}, {7000, 0.59}, {8000, 0.5258},
+        {9000, 0.4671}, {10000, 0.4135}, {15000, 0.1948}, {20000, 0.08891}, {25000, 0.04008}, {30000, 0.01841}, {40000, 0.003996}, {50000, 0.001027},
+        {60000, 0.0003097}, {70000, 0.0000828}, {80000, 0.0000185}
+    };
+    vector<vector<double>> gravityList = 
+    {
+        {0, 9.807}, {1000, 9.804}, {2000, 9.801}, {3000, 9.797}, {4000, 9.794}, {5000, 9.791}, {6000, 9.788}, 
+        {7000, 9.8785}, {8000, 9.782}, {9000, 9.779}, {10000, 9.776}, {15000, 9.761}, {20000, 9.745}, {25000, 9.73} 
+    };
+
     // Convert degrees to radians
-    double degreesToRadians(double degrees) {
+    double degreesToRadians(double degrees) 
+    {
         return degrees * (M_PI / 180.0);
     }
 
     // Convert radians to degrees
-    double radiansToDegrees(double radians) {
+    double radiansToDegrees(double radians) 
+    {
         return radians * (180.0 / M_PI);
     }
 
     // Calculate the vertical component
-    double calculateVerticalComponent(double overallSpeed, double angle) {
+    double calculateVerticalComponent(double overallSpeed, double angle) 
+    {
         return overallSpeed * cos(angle);
     }
 
     // Calculate the horizontal component
-    double calculateHorizontalComponent(double overallSpeed, double angle) {
+    double calculateHorizontalComponent(double overallSpeed, double angle) 
+    {
         return overallSpeed * sin(angle);
     }
 
     // Calculate the angle from horizontal and vertical components
-    double calculateAngle(double dx, double dy) {
+    double calculateAngle(double dx, double dy) 
+    {
         return atan2(dx, dy);
     }
 
     // Calculate the overall speed using the Pythagorean theorem
-    double calculateOverallSpeed(double dx, double dy) {
+    double calculateOverallSpeed(double dx, double dy) 
+    {
         return sqrt(pow(dx, 2) + pow(dy, 2));
     }
 
     // Perform linear interpolation between two points
-    double linearInterpolation(double r0, double d0, double r1, double d1, double r, double d) {
+    double linearInterpolation(double d0, double r0, double d1, double r1, double d) 
+    {
         return ((r1 - r0) * (d - d0) / (d1 - d0)) + r0;
     }
 
@@ -60,55 +110,92 @@ private:
     // TODO: create variable gravity based on altitude
     double calculateGravity(double altitute) 
     {
-        return -9.8;
+        for (int index = 0; index < gravityList.size(); index++)
+        {
+            if (altitude == gravityList[index][0])
+            {
+                return gravityList[index][1];
+            }
+            else if (altitude < gravityList[index][0])
+            {
+                return linearInterpolation(gravityList[index - 1][0], gravityList[index - 1][1], gravityList[index][0], gravityList[index][1], altitude);
+            }
+        }
+        return gravityList[gravityList.size() - 1][1];
     }
 
-    // TODO: create variable coeficient based on altitude.
-    // The altitude impacts the speed of sound and the
-    // speed of sounds relative to the object's speed 
-    // determines the drag coeficient.
-    double calculateDragCoefficient(double altitude)
+    double calculateMach(double altitude, double velocity)
     {
-        return 0.3;
+        for (int index = 0; index < speedOfSoundList.size(); index++)
+        {
+            if (altitude == speedOfSoundList[index][0])
+            {
+                mach = speedOfSoundList[index][1];
+                return velocity / mach;
+            }
+            else if (altitude < speedOfSoundList[index][0])
+            {
+                mach = linearInterpolation(speedOfSoundList[index - 1][0], speedOfSoundList[index - 1][1], speedOfSoundList[index][0], speedOfSoundList[index][1], altitude);
+                return velocity / mach;
+            }
+        }
+        mach = speedOfSoundList[speedOfSoundList.size() - 1][1];
+        return velocity / mach;
+    }
+
+    double calculateDragCoefficient(double speedRelativeToMach)
+    {
+        for (int index = 0; index < dragCoefficentList.size(); index++)
+        {
+            if (speedRelativeToMach == dragCoefficentList[index][0])
+            {
+                return dragCoefficentList[index][1];
+            }
+            else if (speedRelativeToMach < dragCoefficentList[index][0])
+            {
+                return linearInterpolation(dragCoefficentList[index - 1][0], dragCoefficentList[index - 1][1], dragCoefficentList[index][0], dragCoefficentList[index][1], speedRelativeToMach);
+            }
+        }
+        return dragCoefficentList[dragCoefficentList.size() - 1][1];
     }
 
     // TODO: create variable density based on altitude
     double calculateAirDensity(double altitude)
     {
-        return 0.6;
+        for (int index = 0; index < airDensityList.size(); index++)
+        {
+            if (altitude == airDensityList[index][0])
+            {
+                return airDensityList[index][1];
+            }
+            else if (altitude < airDensityList[index][0])
+            {
+                return linearInterpolation(airDensityList[index - 1][0], airDensityList[index - 1][1], airDensityList[index][0], airDensityList[index][1], altitude);
+            }
+        }
     }
 
 public:
     void computeDistance(double aDegrees)
     {
-        // TODO Most of these can become fields
-        double aRadians = degreesToRadians(aDegrees);
-        double totalComponent = 827;
-        double dx = calculateHorizontalComponent(totalComponent, aRadians);
-        double dy = calculateVerticalComponent(totalComponent, aRadians);
-        double ddx;
-        double ddy;
-        double mass = 46.7;
-        double distance = 0;
-        double altitude = 0;
-        double hangTime = 0;
-        double t = 0.01;
-        double gravity;
-        double drag;
-        double dragCoefficient;
-        double airDensity;
-        double dragY;
-        double dragX;
-        double radius = 0.077445;
+        
+        double aRadians = degreesToRadians(aDegrees);       
+        double dx = calculateHorizontalComponent(totalVelocity, aRadians);
+        double dy = calculateVerticalComponent(totalVelocity, aRadians);
         double surfaceArea = calculateAreaOfCircle(radius);
+
         do 
         {
-            totalComponent = calculateOverallSpeed(dx, dy);
+            lastAltitude = altitude;
+            lastDistance = distance;
+
+            totalVelocity = calculateOverallSpeed(dx, dy);
 
             // Calculate the drag at the given altitude
-            dragCoefficient = calculateDragCoefficient(altitude);
+            speedRelativeToMach = calculateMach(altitude, totalVelocity);
+            dragCoefficient = calculateDragCoefficient(speedRelativeToMach);
             airDensity = calculateAirDensity(altitude);
-            drag = calculateDrag(dragCoefficient, airDensity, totalComponent, surfaceArea);
+            drag = calculateDrag(dragCoefficient, airDensity, totalVelocity, surfaceArea);
 
             // Convert drag from force to acceleration
             drag = calculateAcceleration(drag, mass);
@@ -135,8 +222,9 @@ public:
         } 
         while (altitude > 0);
 
-        cout << "Distance: " << distance << "\n";
-        cout << "Altitude: " << altitude << "\n";
+        double finalDistance = linearInterpolation(lastDistance, lastAltitude, distance, altitude, 0);
+
+        cout << "Distance: " << finalDistance << "\n";
         cout << "Hang time: " << hangTime << "\n";
     }
 };
