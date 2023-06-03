@@ -18,7 +18,7 @@ private:
     double altitude = 0;
     double lastAltitude;
     double hangTime = 0;
-    double t = 0.01;
+    double t = 1;
     double gravity;
     double drag;
     double dragCoefficient;
@@ -154,6 +154,10 @@ private:
             }
             else if (speedRelativeToMach < dragCoefficentList[index][0])
             {
+                if (index == 0)
+                {
+                    return dragCoefficentList[0][1];
+                }
                 double dragCoeff = linearInterpolation(dragCoefficentList[index - 1][0], dragCoefficentList[index - 1][1], dragCoefficentList[index][0], dragCoefficentList[index][1], speedRelativeToMach);
                 return dragCoeff;
             }
@@ -175,6 +179,7 @@ private:
                 return linearInterpolation(airDensityList[index - 1][0], airDensityList[index - 1][1], airDensityList[index][0], airDensityList[index][1], altitude);
             }
         }
+        return airDensityList[airDensityList.size()-1][1];
     }
 
 public:
@@ -188,6 +193,9 @@ public:
 
         do 
         {
+            if (hangTime == 0.3)
+                cout << "10";
+
             lastAltitude = altitude;
             lastDistance = distance;
 

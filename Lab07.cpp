@@ -156,8 +156,18 @@ int main(int argc, char** argv)
       "Demo",   /* name on the window */
       ptUpperRight);
 
-   Physics physics = Physics();
-   physics.computeDistance(75);
+   Physics physics1 = Physics();
+   Physics physics2 = Physics();
+   Physics physics3 = Physics();
+   Physics physics4 = Physics();
+   cout << "UP: 0" << "\n";
+   physics1.computeDistance(0);
+   cout << "\n" << "High: 30 degrees" << "\n";
+   physics2.computeDistance(30);
+   cout << "\n" << "Low: 60 degrees" << "\n";
+   physics3.computeDistance(60);
+   cout << "\n" << "Backwards: -45 degrees" << "\n";
+   physics4.computeDistance(-45);
 
    //// Initialize the demo
    //Demo demo(ptUpperRight);
