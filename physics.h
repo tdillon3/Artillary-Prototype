@@ -8,7 +8,8 @@ using namespace std;
 class Physics
 {
 private:
-
+    double dx;
+    double dy;
     double ddx;
     double ddy;
     double mass = 46.7;
@@ -153,7 +154,8 @@ private:
             }
             else if (speedRelativeToMach < dragCoefficentList[index][0])
             {
-                return linearInterpolation(dragCoefficentList[index - 1][0], dragCoefficentList[index - 1][1], dragCoefficentList[index][0], dragCoefficentList[index][1], speedRelativeToMach);
+                double dragCoeff = linearInterpolation(dragCoefficentList[index - 1][0], dragCoefficentList[index - 1][1], dragCoefficentList[index][0], dragCoefficentList[index][1], speedRelativeToMach);
+                return dragCoeff;
             }
         }
         return dragCoefficentList[dragCoefficentList.size() - 1][1];
@@ -180,8 +182,8 @@ public:
     {
         
         double aRadians = degreesToRadians(aDegrees);       
-        double dx = calculateHorizontalComponent(totalVelocity, aRadians);
-        double dy = calculateVerticalComponent(totalVelocity, aRadians);
+        dx = calculateHorizontalComponent(totalVelocity, aRadians);
+        dy = calculateVerticalComponent(totalVelocity, aRadians);
         double surfaceArea = calculateAreaOfCircle(radius);
 
         do 
@@ -204,16 +206,15 @@ public:
             ddx = calculateHorizontalComponent(drag, aRadians);
             ddy = calculateVerticalComponent(drag, aRadians);
 
-
             // Update the altitude
             gravity = calculateGravity(altitude);
-            double test = gravity + ddy;
-            dy = dy + ((gravity + ddy) * t);
-            altitude = altitude + (dy * t);
+            ddy -= gravity;
+            altitude = altitude + (dy * t) + (0.5 * ddy * 0.1 * 0.1);
+            dy = dy + (ddy * t);
 
             // Update the distance
+            distance = distance + (dx * t) + (0.5 * ddx * 0.1 * 0.1);
             dx = dx + (ddx * t);
-            distance = distance + (dx * t);
 
             // Find the new angle
             aRadians = calculateAngle(dx, dy);
@@ -222,7 +223,7 @@ public:
         } 
         while (altitude > 0);
 
-        double finalDistance = linearInterpolation(lastDistance, lastAltitude, distance, altitude, 0);
+        double finalDistance = linearInterpolation(lastAltitude, lastDistance, altitude, distance,  0);
 
         cout << "Distance: " << finalDistance << "\n";
         cout << "Hang time: " << hangTime << "\n";
