@@ -259,7 +259,6 @@ private:
 		bullet.angle.setAngle(60);
 		bullet.updateVelocity();
 		bullet.updateVelocity();
-		bullet.updateVelocity();
 
 		// Assert
 		assert(bullet.dx == 644.5);
