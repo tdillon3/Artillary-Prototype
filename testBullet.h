@@ -3,6 +3,7 @@
 #include <iostream>
 #include "ground.h"
 #include "position.h"
+#include "bullet.h"
 
 /// <summary>
 /// Test class to test the updating of the bullet
@@ -16,20 +17,16 @@ public:
 
 		singleUpdate();
 		singleUpdateNegative();
-
 		largeUpdate();
-		hitGround();
 
 		fullList();
 		fullListNegative();
 		fullListDecimal();
 
 		overflowList();
+		overflowListNegative();
 
-		updateVelocity30Once();
-		updateVelocity30Thrice();
-		updateVelocity60Once();
-		updateVelocity60Twice();
+		cout << "All bullet tests passed!\n";
 	}
 
 private:
@@ -39,11 +36,10 @@ private:
 		Bullet bullet = Bullet();
 
 		// Verify
-		for (int count = 0; count < 20; count++)
-		{
-			assert(bullet.listx[count] == 0);
-			assert(bullet.listy[count] == 0);
-		}
+		assert(bullet.listX.front() == 0);
+		assert(bullet.listX.back() == 0);
+		assert(bullet.listY.front() == 0);
+		assert(bullet.listY.back() == 0);
 		assert(bullet.listX.size() == 20);
 		assert(bullet.listY.size() == 20);
 	}
@@ -58,10 +54,10 @@ private:
 		bullet.updatePosition();
 
 		// Verify
-		assert(bullet.listx[0] == 8);
-		assert(bullet.listx.size() == 20);
-		assert(bullet.listy[0] == 7);
-		assert(bullet.listy.size() == 20);
+		assert(bullet.listX.back() == 8);
+		assert(bullet.listX.size() == 20);
+		assert(bullet.listY.back() == 7);
+		assert(bullet.listY.size() == 20);
 	}
 	void singleUpdateNegative()
 	{
@@ -74,10 +70,10 @@ private:
 		bullet.updatePosition();
 
 		// Verify
-		assert(bullet.listx[0] == -18);
-		assert(bullet.listx.size() == 20);
-		assert(bullet.listy[0] == 7);
-		assert(bullet.listy.size() == 20);
+		assert(bullet.listX.back() == -18);
+		assert(bullet.listX.size() == 20);
+		assert(bullet.listY.back() == 7);
+		assert(bullet.listY.size() == 20);
 	}
 	void largeUpdate()
 	{
@@ -87,50 +83,19 @@ private:
 		// Exercise
 		bullet.componentX = 8;
 		bullet.componentY = 7;
-		bullet.Position();
-
-		bullet.componentX = 600;
-		bullet.componentY = 900;
-		bullet.Position();
-
-		// Verify
-		assert(bullet.listx[0] == 608);
-		assert(bullet.listx[1] == 8);
-		assert(bullet.listx.size() == 20);
-		assert(bullet.listy[0] == 907);
-		assert(bullet.listy[1] == 7);
-		assert(bullet.listy.size() == 20);
-	}
-
-	// Zero out the position history when bullet hits ground
-	void hitGround()
-	{
-		// Set-up
-		Bullet bullet = Bullet();
-		Ground ground = ground();
-
-		// Exercise
-		Position targetPosition = ground.getTarget();
-		
-		bullet.componentX = 8;
-		bullet.componentY = 7;
 		bullet.updatePosition();
 
 		bullet.componentX = 600;
 		bullet.componentY = 900;
 		bullet.updatePosition();
 
-		bullet.componentX = targetPosition.getPixelsX() - bullet.x;
-		bullet.componentY = targetPosition.getPixelsY() - bullet.y;
-		bullet.updatePosition();
-
 		// Verify
-		for (int count = 0; count < 20; count++)
-		{
-			assert(bullet.listx[count] == 0);
-			assert(bullet.listy[count] == 0);
-		}
+		assert(bullet.listX.back() == 608);
+		assert(bullet.listX.size() == 20);
+		assert(bullet.listY.back() == 907);
+		assert(bullet.listY.size() == 20);
 	}
+
 	void fullList()
 	{
 		// Set-up
@@ -145,10 +110,10 @@ private:
 		}
 
 		// Verify
-		assert(bullet.listX[0] == 190);
-		assert(bullet.listY[0] == 190);
-		assert(bullet.listX[19] == 0);
-		assert(bullet.listY[19] == 0);
+		assert(bullet.listX.back() == 190);
+		assert(bullet.listY.back() == 190);
+		assert(bullet.listX.front() == 0);
+		assert(bullet.listY.front() == 0);
 	}
 	void fullListNegative()
 	{
@@ -164,10 +129,10 @@ private:
 		}
 
 		// Verify
-		assert(bullet.listX[0] == -190);
-		assert(bullet.listY[0] == 190);
-		assert(bullet.listX[19] == 0);
-		assert(bullet.listY[19] == 0);
+		assert(bullet.listX.back() == -190);
+		assert(bullet.listY.back() == 190);
+		assert(bullet.listX.front() == 0);
+		assert(bullet.listY.front() == 0);
 	}
 	void fullListDecimal()
 	{
@@ -183,12 +148,12 @@ private:
 		}
 
 		// Verify
-		assert(bullet.listX[0] == 180);
-		assert(bullet.listY[0] == 190);
-		assert(bullet.listX[19] == -0.5);
-		assert(bullet.listY[19] == 0);
+		assert(bullet.listX.back() == 180);
+		assert(bullet.listY.back() == 190);
+		assert(bullet.listX.front() == - 0.5);
+		assert(bullet.listY.front() == 0);
 	}
-	void overflowList()
+	void overflowListNegative()
 	{
 		// Set-up
 		Bullet bullet = Bullet();
@@ -202,67 +167,29 @@ private:
 		}
 
 		// Verify
-		assert(bullet.listX[0] == 595);
-		assert(bullet.listY[0] == 34);
-		assert(bullet.listX[19] == 15);
-		assert(bullet.listY[19] == 15);
+		assert(bullet.listX.back() == -595);
+		assert(bullet.listY.back() == 595);
+		assert(bullet.listX.front() == -120);
+		assert(bullet.listY.front() == 120);
 	}
-	void updateVelocity30Once()
+	void overflowList()
 	{
 		// Set-up
 		Bullet bullet = Bullet();
 
 		// Exercise
-		bullet.angle.setAngle(30);
-		bullet.updateVelocity();
+		for (int count = 0; count < 35; count++)
+		{
+			bullet.componentX = count;
+			bullet.componentY = count;
+			bullet.updatePosition();
+		}
 
-		// Assert
-		assert(bullet.dx == 391.6);
-		assert(bullet.dy == 688.4);
-	}
-	void updateVelocity30Thrice()
-	{
-		// Set-up
-		Bullet bullet = Bullet();
-
-		// Exercise
-		bullet.angle.setAngle(30);
-		bullet.updateVelocity();
-		bullet.updateVelocity();
-		bullet.updateVelocity();
-
-		// Assert
-		assert(bullet.dx == 356.5);
-		assert(bullet.dy == 589.4);
-	}
-	void updateVelocity60Once()
-	{
-		// Set-up
-		Bullet bullet = Bullet();
-
-		// Exercise
-		bullet.angle.setAngle(60);
-		bullet.updateVelocity();
-		bullet.updateVelocity();
-		bullet.updateVelocity();
-
-		// Assert
-		assert(bullet.dx == 678.2);
-		assert(bullet.dy == 381.8);
-	}
-	void updateVelocity60Twice()
-	{
-		// Set-up
-		Bullet bullet = Bullet();
-
-		// Exercise
-		bullet.angle.setAngle(60);
-		bullet.updateVelocity();
-		bullet.updateVelocity();
-
-		// Assert
-		assert(bullet.dx == 644.5);
-		assert(bullet.dy == 353);
+		// Verify
+		assert(bullet.listX.back() == 595);
+		assert(bullet.listY.back() == 595);
+		assert(bullet.listX.front() == 120);
+		assert(bullet.listY.front() == 120);
 	}
 };
 

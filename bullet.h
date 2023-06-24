@@ -1,0 +1,60 @@
+#pragma once
+#include <cassert>
+#include <iostream>
+#include <list>
+#include "ground.h"
+#include "position.h"
+#include <queue>
+
+
+/// <summary>
+/// Test class to test the updating of the bullet
+/// </summary>
+class Bullet
+{
+public:
+	std::queue<double> listX;
+	std::queue<double> listY;
+	double componentX = 0.0;
+	double componentY = 0.0;
+	double x = 0.0;
+	double y = 0.0;
+
+	Bullet()
+	{
+		for (int count = 1; count <= 20; count++)
+		{
+			listX.push(0);
+			listY.push(0);
+		}
+	}
+
+	void updatePosition()
+	{
+		x = x + componentX;
+
+		listX.pop();
+		listX.push(x);
+
+
+		y = y + componentY;
+
+		listY.pop();
+		listY.push(y);
+
+		if (y < 0)
+		{
+			for (int count = 0; count < 20; count++)
+			{
+				listX.pop();
+				listX.push(0);
+				listY.pop();
+				listY.push(0);
+			}
+		}
+	}
+
+private:
+	Position position = Position();
+};
+

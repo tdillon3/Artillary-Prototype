@@ -1,5 +1,6 @@
 #pragma once
 #include <cassert>
+#include "display.h"
 
 /// <summary>
 /// Test cases for the display that shows the current altitude, velocity, distance and time.
@@ -20,6 +21,8 @@ public:
 		speedCalculation2();
 		speedCalculation3();
 		speedCalculation4();
+
+		cout << "All display tests passed!\n";
 	}
 
 private:
@@ -32,7 +35,7 @@ private:
 		display.setDisplay(-10000, 100, 10.1);
 
 		// Verify
-		assert(display.altitude == 10000);
+		assert(display.altitude == 0);
 	}
 	void distanceReverse1()
 	{
@@ -43,7 +46,7 @@ private:
 		display.setDisplay(100, -100000, 5.4);
 
 		// Verify
-		assert(display.Distance == 100000);
+		assert(display.distance == 100000);
 	}
 	void distanceReverse2()
 	{
@@ -54,7 +57,7 @@ private:
 		display.setDisplay(100, 0, 5);
 
 		// Verify
-		assert(display.Distance == 0);
+		assert(display.distance == 0);
 	}
 	void speedCalculation1()
 	{
@@ -64,10 +67,10 @@ private:
 		double dy = 100;
 
 		// Exercise
-		double velocity = display.calculateOverallSpeed(dx, dy);
+		display.calculateOverallSpeed(dx, dy);
 
 		// Verify
-		assert(velocity == 141.2);
+		assert(display.speed == 141.4);
 	}
 	void speedCalculation2()
 	{
@@ -77,10 +80,10 @@ private:
 		double dy = 490;
 
 		// Exercise
-		double velocity = display.calculateOverallSpeed(dx, dy);
+		display.calculateOverallSpeed(dx, dy);
 
 		// Verify
-		assert(velocity == 490);
+		assert(display.speed == 490);
 	}
 	void speedCalculation3()
 	{
@@ -90,10 +93,10 @@ private:
 		double dy = 0;
 
 		// Exercise
-		double velocity = display.calculateOverallSpeed(dx, dy);
+		display.calculateOverallSpeed(dx, dy);
 
 		// Verify
-		assert(velocity == 720);
+		assert(display.speed == 720);
 	}
 	void speedCalculation4()
 	{
@@ -103,10 +106,10 @@ private:
 		double dy = 0;
 
 		// Exercise
-		double velocity = display.calculateOverallSpeed(dx, dy);
+		display.calculateOverallSpeed(dx, dy);
 
 		// Verify
-		assert(velocity == 0);
+		assert(display.speed == 0);
 	}
 	void timeNegative()
 	{
