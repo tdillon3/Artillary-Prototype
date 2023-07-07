@@ -17,10 +17,11 @@
  * TEST RUNNER
  * Runs all the unit tests
  ****************************************************************/
-int main()
+int runTests()
 {
    TestPosition().run();
    TestGround().run();
    TestBullet().run();
    TestDisplay().run();
+   return 1;
 }

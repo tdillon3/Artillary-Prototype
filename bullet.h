@@ -5,6 +5,7 @@
 #include "ground.h"
 #include "position.h"
 #include <queue>
+#include "Lab07.cpp"
 
 
 /// <summary>
@@ -20,13 +21,17 @@ public:
 	double x = 0.0;
 	double y = 0.0;
 
-	Bullet()
+	Bullet(Position* howitzer)
 	{
-		for (int count = 1; count <= 20; count++)
+		for (int count = 1; count <= 19; count++)
 		{
 			listX.push(0);
 			listY.push(0);
 		}
+		x = howitzer->getPixelsX();
+		y = howitzer->getPixelsY();
+		listX.push(x);
+		listY.push(y);
 	}
 
 	void updatePosition()
