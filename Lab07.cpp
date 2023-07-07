@@ -17,6 +17,7 @@
 #include "ground.h"     // for GROUND
 #include "position.h"   // for POSITION
 #include "physics.h"
+#include "bullet.h"
 
 using namespace std;
 
@@ -38,6 +39,8 @@ public:
 
       // Generate the ground and set the vertical position of the howitzer.
       ground.reset(ptHowitzer);
+
+      Bullet bullet = Bullet(&ptHowitzer);
 
       // This is to make the bullet travel across the screen. Notice how there are 
       // 20 pixels, each with a different age. This gives the appearance
