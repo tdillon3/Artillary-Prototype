@@ -98,8 +98,8 @@ void callBack(const Interface* pUI, void* p)
       pDemo->time = 0.0;
 
 
-   pDemo->bullet.componentX = pDemo->physics.GetHorizantalComponent();
-   pDemo->bullet.componentY = pDemo->physics.GetVerticalComponent();
+   pDemo->bullet.componentX = pDemo->physics.GetHorizantalComponent() / 40;
+   pDemo->bullet.componentY = pDemo->physics.GetVerticalComponent() / 40;
 
    
 
