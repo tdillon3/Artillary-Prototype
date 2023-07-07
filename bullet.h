@@ -4,8 +4,8 @@
 #include <list>
 #include "ground.h"
 #include "position.h"
-#include <queue>
 #include "Lab07.cpp"
+#include <queue>
 
 
 /// <summary>
@@ -28,10 +28,8 @@ public:
 			listX.push(0);
 			listY.push(0);
 		}
-		x = howitzer->getPixelsX();
-		y = howitzer->getPixelsY();
-		listX.push(x);
-		listY.push(y);
+		x = howitzer->getMetersX();
+		y = howitzer->getMetersY();
 	}
 
 	void updatePosition()
