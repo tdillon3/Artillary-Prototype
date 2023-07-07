@@ -236,6 +236,13 @@ public:
         cout << "Distance: " << finalDistance << "\n";
         cout << "Hang time: " << hangTime << "\n";
     }
+
+    double GetHorizantalComponent() {
+        return dx;
+    }
+    double GetVerticalComponent() {
+        return dy;
+    }
 };
 
 //int main()

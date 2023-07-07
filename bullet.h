@@ -6,6 +6,7 @@
 #include "position.h"
 #include "Lab07.cpp"
 #include <queue>
+#include "physics.h"
 
 
 /// <summary>
@@ -14,10 +15,11 @@
 class Bullet
 {
 public:
+
 	std::queue<double> listX;
 	std::queue<double> listY;
-	double componentX = 0.0;
-	double componentY = 0.0;
+	double componentX;
+	double componentY;
 	double x = 0.0;
 	double y = 0.0;
 
@@ -30,6 +32,8 @@ public:
 		}
 		x = howitzer->getMetersX();
 		y = howitzer->getMetersY();
+		listX.push(x);
+		listY.push(y);
 	}
 
 	void updatePosition()

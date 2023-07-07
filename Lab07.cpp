@@ -40,7 +40,7 @@ public:
       // Generate the ground and set the vertical position of the howitzer.
       ground.reset(ptHowitzer);
 
-      Bullet bullet = Bullet(&ptHowitzer);
+      bullet = Bullet(&ptHowitzer);
 
       // This is to make the bullet travel across the screen. Notice how there are 
       // 20 pixels, each with a different age. This gives the appearance
@@ -52,10 +52,12 @@ public:
       }
    }
 
+   Bullet bullet;
    Ground ground;                 // the ground
    Position  projectilePath[20];  // path of the projectile
    Position  ptHowitzer;          // location of the howitzer
    Position  ptUpperRight;        // size of the screen
+   Physics physics = Physics();
    double angle;                  // angle of the howitzer 
    double time;                   // amount of time since the last firing
 };
@@ -72,6 +74,8 @@ void callBack(const Interface* pUI, void* p)
    // the first step is to cast the void pointer into a game object. This
    // is the first step of every single callback function in OpenGL. 
    Demo* pDemo = (Demo*)p;
+
+
 
    //
    // accept input
@@ -92,6 +96,12 @@ void callBack(const Interface* pUI, void* p)
    // fire that gun
    if (pUI->isSpace())
       pDemo->time = 0.0;
+
+
+   pDemo->bullet.componentX = pDemo->physics.GetHorizantalComponent();
+   pDemo->bullet.componentY = pDemo->physics.GetVerticalComponent();
+
+   
 
    //
    // perform all the game logic
