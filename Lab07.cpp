@@ -122,6 +122,13 @@ void callBack(const Interface* pUI, void* p)
            pDemo->projectilePath[i] = Position(pDemo->bullet.listX[i], pDemo->bullet.listY[i]);
        }
 
+       if((pDemo->projectilePath[0].getPixelsX() >= pDemo->ground.getTarget().getPixelsX() - 5 && 
+           pDemo->projectilePath[0].getPixelsX() <= pDemo->ground.getTarget().getPixelsX() + 5) &&
+           pDemo->projectilePath[0].getPixelsY() <= pDemo->ground.getTarget().getPixelsY()) 
+       {
+           cout << "YOU HIT THE TARGET!!!!";
+       }
+
        pDemo->isBulletAirborn = pDemo->physics.computeDistance();
        if (!pDemo->isBulletAirborn)
        {

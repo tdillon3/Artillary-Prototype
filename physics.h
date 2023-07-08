@@ -226,6 +226,7 @@ public:
 
         double groundElevation = ground->getElevationMeters(Position(distance, altitude));
         if (altitude - groundElevation < 0) {
+
             distance = linearInterpolation(lastAltitude, lastDistance, altitude, distance, 0);
             return false;
         }
