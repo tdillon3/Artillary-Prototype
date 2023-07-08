@@ -25,15 +25,17 @@ public:
 
 	void newBullet(Position* howitzer)
 	{
-		for (int count = 1; count <= 19; count++)
-		{
-			listX.push(0);
-			listY.push(0);
+		if (listX.size() < 20) {
+			for (int count = 1; count <= 19; count++)
+			{
+				listX.push(0);
+				listY.push(0);
+			}
+			x = howitzer->getMetersX();
+			y = howitzer->getMetersY();
+			listX.push(x);
+			listY.push(y);
 		}
-		x = howitzer->getMetersX();
-		y = howitzer->getMetersY();
-		listX.push(x);
-		listY.push(y);
 	}
 
 	void updatePosition()
