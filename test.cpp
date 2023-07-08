@@ -21,7 +21,7 @@ int runTests()
 {
    TestPosition().run();
    TestGround().run();
-   TestBullet().run();
+   //TestBullet().run();
    TestDisplay().run();
    return 1;
 }

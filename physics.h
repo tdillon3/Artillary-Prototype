@@ -30,7 +30,6 @@ private:
     double mach;
     double speedRelativeToMach;
     double surfaceArea = calculateAreaOfCircle(radius);
-    double aRadians = degreesToRadians(aDegrees);
     vector<vector<double>> dragCoefficentList = 
     { 
         {0.3, 0.1629}, {0.5, 0.1659}, {0.7, 0.2031}, {0.89, 0.2597}, {0.92, 0.3010}, {0.96, 0.3287}, {0.980, 0.4002}, {1.0, 0.4258}, 
@@ -186,7 +185,8 @@ private:
 
 public:
     void computeDistance(double aDegrees)
-    {                     
+    {             
+        double aRadians = degreesToRadians(aDegrees);
         dx = calculateHorizontalComponent(totalVelocity, aRadians);
         dy = calculateVerticalComponent(totalVelocity, aRadians);
 
