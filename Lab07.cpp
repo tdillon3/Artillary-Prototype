@@ -39,17 +39,19 @@ public:
 
       // Generate the ground and set the vertical position of the howitzer.
       ground.reset(ptHowitzer);
+      
+      physics = Physics(&ground);
 
       bullet.newBullet(&ptHowitzer);
 
       // This is to make the bullet travel across the screen. Notice how there are 
       // 20 pixels, each with a different age. This gives the appearance
       // of a trail that fades off in the distance.
-      for (int i = 0; i < 20; i++)
-      {
-         projectilePath[i].setPixelsX((double)i * 2.0);
-         projectilePath[i].setPixelsY(ptUpperRight.getPixelsY() / 1.5);
-      }
+      //for (int i = 0; i < 20; i++)
+      //{
+      //   projectilePath[i].setPixelsX((double)i * 2.0);
+      //   projectilePath[i].setPixelsY(ptUpperRight.getPixelsY() / 1.5);
+      //}
    }
 
    Bullet bullet;
@@ -57,9 +59,10 @@ public:
    Position  projectilePath[20];  // path of the projectile
    Position  ptHowitzer;          // location of the howitzer
    Position  ptUpperRight;        // size of the screen
-   Physics physics = Physics();
+   Physics physics;
    double angle;                  // angle of the howitzer 
    double time;                   // amount of time since the last firing
+   bool isBulletAirborn = false;
 };
 
 /*************************************
@@ -74,8 +77,6 @@ void callBack(const Interface* pUI, void* p)
    // the first step is to cast the void pointer into a game object. This
    // is the first step of every single callback function in OpenGL. 
    Demo* pDemo = (Demo*)p;
-
-
 
    //
    // accept input
@@ -94,26 +95,38 @@ void callBack(const Interface* pUI, void* p)
       pDemo->angle += (pDemo->angle >= 0 ? 0.003 : -0.003);
 
    // fire that gun
-   if (pUI->isSpace())
-      pDemo->time = 0.0;
-
-
-   pDemo->bullet.componentX = pDemo->physics.GetHorizontalComponent() / 40;
-   pDemo->bullet.componentY = pDemo->physics.GetVerticalComponent() / 40;
-
-   pDemo->bullet.updatePosition();
+   if (pUI->isSpace() && !pDemo->isBulletAirborn)
+   {
+       pDemo->physics.setAltitude(pDemo->ptHowitzer.getMetersY());
+       pDemo->physics.setDistance(pDemo->ptHowitzer.getMetersX());
+       pDemo->time = 0.0;
+       pDemo->physics.beginLaunch(pDemo->angle);
+       pDemo->isBulletAirborn = true;
+   }
 
    //
    // perform all the game logic
    //
-
-   // advance time by half a second.
-   pDemo->time += 0.5;
-
-   // move the projectile across the screen
-   for (int i = 0; i < 20; i++)
+   if (pDemo->isBulletAirborn)
    {
-      pDemo->projectilePath[i] = Position(pDemo->bullet.listX[i], pDemo->bullet.listY[i]);
+       pDemo->bullet.componentX = pDemo->physics.GetHorizontalComponent() / 2;
+       pDemo->bullet.componentY = pDemo->physics.GetVerticalComponent() / 2;
+       pDemo->bullet.updatePosition();
+
+       // advance time by half a second.
+       pDemo->time += 0.5;
+
+       // move the projectile across the screen
+       for (int i = 0; i < 20; i++)
+       {
+           pDemo->projectilePath[i] = Position(pDemo->bullet.listX[i], pDemo->bullet.listY[i]);
+       }
+
+       pDemo->isBulletAirborn = pDemo->physics.computeDistance();
+       if (!pDemo->isBulletAirborn)
+       {
+           pDemo->bullet.newBullet(&pDemo->ptHowitzer);
+       }
    }
    
    //
@@ -129,14 +142,25 @@ void callBack(const Interface* pUI, void* p)
    gout.drawHowitzer(pDemo->ptHowitzer, pDemo->angle, pDemo->time);
 
    // draw the projectile
-   for (int i = 0; i < 20; i++)
-      gout.drawProjectile(pDemo->projectilePath[i], 0.5 * (double)i);
+   if (pDemo->isBulletAirborn) {
+       for (int i = 0; i < 20; i++)
+           gout.drawProjectile(pDemo->projectilePath[i], 0.5 * (double)i);
+   }
 
    // draw some text on the screen
    gout.setf(ios::fixed | ios::showpoint);
    gout.precision(1);
-   gout << "Time since the bullet was fired: "
-        << pDemo->time << "s\n";
+   gout.setPosition(Position(20000, 18500));
+   if (pDemo->isBulletAirborn) {
+       gout << "Time since the bullet was fired: " << pDemo->time << "s\n"
+           << "Altitude: " << pDemo->physics.getAltitude() << "m\n"
+           << "Distance: " << pDemo->physics.getDistance() << "m\n"
+           << "Speed: " << pDemo->physics.getSpeed() << "m/s\n";
+   }
+   else {
+       gout << "Angle: " << (pDemo->angle * 180) / 3.14159 << "degrees";
+   }
+
 }
 
 double Position::metersFromPixels = 40.0;

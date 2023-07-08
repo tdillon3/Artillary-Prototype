@@ -12,13 +12,14 @@ private:
     double dy;
     double ddx;
     double ddy;
+    double aRadians;
     double mass = 46.7;
     double distance = 0;
     double lastDistance;
     double altitude = 0;
     double lastAltitude;
     double hangTime = 0;
-    double t = 1;
+    double t = 0.5;
     double gravity;
     double drag;
     double dragCoefficient;
@@ -26,10 +27,11 @@ private:
     double dragY;
     double dragX;
     double radius = 0.077445;
-    double totalVelocity = 827;
+    double totalVelocity;
     double mach;
     double speedRelativeToMach;
     double surfaceArea = calculateAreaOfCircle(radius);
+    Ground* ground;
     vector<vector<double>> dragCoefficentList = 
     { 
         {0.3, 0.1629}, {0.5, 0.1659}, {0.7, 0.2031}, {0.89, 0.2597}, {0.92, 0.3010}, {0.96, 0.3287}, {0.980, 0.4002}, {1.0, 0.4258}, 
@@ -184,13 +186,14 @@ private:
     }
 
 public:
-    void computeDistance(double aDegrees)
+    Physics() {}
+    Physics(Ground* groundCopy) {
+        ground = groundCopy;
+    }
+    bool computeDistance()
     {             
-        double aRadians = degreesToRadians(aDegrees);
         dx = calculateHorizontalComponent(totalVelocity, aRadians);
         dy = calculateVerticalComponent(totalVelocity, aRadians);
-
-        totalVelocity = calculateOverallSpeed(dx, dy);
 
         // Calculate the drag at the given altitude
         speedRelativeToMach = calculateMach(altitude, totalVelocity);
@@ -207,25 +210,55 @@ public:
 
         // Update the altitude
         gravity = calculateGravity(altitude);
-        ddy -= gravity;
-        altitude = altitude + (dy * t) + (0.5 * ddy * 0.1 * 0.1);
+        ddy -= gravity;        
         dy = dy + (ddy * t);
+        altitude = altitude + (dy * t);
 
         // Update the distance
-        distance = distance + (dx * t) + (0.5 * ddx * 0.1 * 0.1);
         dx = dx + (ddx * t);
+        distance = distance + (dx * t);
 
         // Find the new angle
         aRadians = calculateAngle(dx, dy);
+        totalVelocity = calculateOverallSpeed(dx, dy);
 
         hangTime += t;
 
-        double finalDistance = linearInterpolation(lastAltitude, lastDistance, altitude, distance,  0);
+        double groundElevation = ground->getElevationMeters(Position(distance, altitude));
+        if (altitude - groundElevation < 0) {
+            distance = linearInterpolation(lastAltitude, lastDistance, altitude, distance, 0);
+            return false;
+        }
+        return true;
     }
     double GetHorizontalComponent() {
         return dx;
     }
     double GetVerticalComponent() {
         return dy;
+    }
+    void beginLaunch(double degrees)
+    {
+        aRadians = degrees;
+        totalVelocity = 827;
+    }
+    void setAltitude(double howitzerHeight) {
+        altitude = howitzerHeight;
+    }
+    void setDistance(double howitzerDistance) {
+        distance = howitzerDistance;
+    }
+    double getAltitude() {
+        if (altitude < 0)
+            return 0;
+        return altitude;
+    }
+    double getSpeed() {
+        return totalVelocity;
+    }
+    double getDistance() {
+        if (distance < 0)
+            return distance * -1;
+        return distance;
     }
 };
