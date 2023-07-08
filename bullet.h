@@ -4,7 +4,6 @@
 #include <list>
 #include "ground.h"
 #include "position.h"
-#include "Lab07.cpp"
 #include <deque>
 #include "physics.h"
 
@@ -66,4 +65,3 @@ public:
 private:
 	Position position = Position();
 };
-
