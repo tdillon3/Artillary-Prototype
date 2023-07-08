@@ -29,6 +29,8 @@ private:
     double totalVelocity = 827;
     double mach;
     double speedRelativeToMach;
+    double surfaceArea = calculateAreaOfCircle(radius);
+    double aRadians = degreesToRadians(aDegrees);
     vector<vector<double>> dragCoefficentList = 
     { 
         {0.3, 0.1629}, {0.5, 0.1659}, {0.7, 0.2031}, {0.89, 0.2597}, {0.92, 0.3010}, {0.96, 0.3287}, {0.980, 0.4002}, {1.0, 0.4258}, 
@@ -184,78 +186,40 @@ private:
 
 public:
     void computeDistance(double aDegrees)
-    {
-        
-        double aRadians = degreesToRadians(aDegrees);       
+    {                     
         dx = calculateHorizontalComponent(totalVelocity, aRadians);
         dy = calculateVerticalComponent(totalVelocity, aRadians);
-        double surfaceArea = calculateAreaOfCircle(radius);
 
-        do 
-        {
-            if (hangTime == 0.3)
-                cout << "10";
+        totalVelocity = calculateOverallSpeed(dx, dy);
 
-            lastAltitude = altitude;
-            lastDistance = distance;
+        // Calculate the drag at the given altitude
+        speedRelativeToMach = calculateMach(altitude, totalVelocity);
+        dragCoefficient = calculateDragCoefficient(speedRelativeToMach);
+        airDensity = calculateAirDensity(altitude);
+        drag = calculateDrag(dragCoefficient, airDensity, totalVelocity, surfaceArea);
 
-            totalVelocity = calculateOverallSpeed(dx, dy);
+        // Convert drag from force to acceleration
+        drag = calculateAcceleration(drag, mass);
 
-            // Calculate the drag at the given altitude
-            speedRelativeToMach = calculateMach(altitude, totalVelocity);
-            dragCoefficient = calculateDragCoefficient(speedRelativeToMach);
-            airDensity = calculateAirDensity(altitude);
-            drag = calculateDrag(dragCoefficient, airDensity, totalVelocity, surfaceArea);
+        // Split the drag into the horizontal and vertical components.
+        ddx = calculateHorizontalComponent(drag, aRadians);
+        ddy = calculateVerticalComponent(drag, aRadians);
 
-            // Convert drag from force to acceleration
-            drag = calculateAcceleration(drag, mass);
+        // Update the altitude
+        gravity = calculateGravity(altitude);
+        ddy -= gravity;
+        altitude = altitude + (dy * t) + (0.5 * ddy * 0.1 * 0.1);
+        dy = dy + (ddy * t);
 
-            // Split the drag into the horizontal and vertical components.
-            ddx = calculateHorizontalComponent(drag, aRadians);
-            ddy = calculateVerticalComponent(drag, aRadians);
+        // Update the distance
+        distance = distance + (dx * t) + (0.5 * ddx * 0.1 * 0.1);
+        dx = dx + (ddx * t);
 
-            // Update the altitude
-            gravity = calculateGravity(altitude);
-            ddy -= gravity;
-            altitude = altitude + (dy * t) + (0.5 * ddy * 0.1 * 0.1);
-            dy = dy + (ddy * t);
+        // Find the new angle
+        aRadians = calculateAngle(dx, dy);
 
-            // Update the distance
-            distance = distance + (dx * t) + (0.5 * ddx * 0.1 * 0.1);
-            dx = dx + (ddx * t);
-
-            // Find the new angle
-            aRadians = calculateAngle(dx, dy);
-
-            hangTime += t;
-        } 
-        while (altitude > 0);
+        hangTime += t;
 
         double finalDistance = linearInterpolation(lastAltitude, lastDistance, altitude, distance,  0);
-
-        cout << "Distance: " << finalDistance << "\n";
-        cout << "Hang time: " << hangTime << "\n";
     }
 };
-
-//int main()
-//{   
-//    //double dragCoe = 0.4258;
-//    //double density = 0.4135000;
-//    //double velocity = 299;
-//    //double radius = .077445;
-//    //double sArea = (radius * radius) * 4 * 3.14195;
-//    //double mass = 46.7;
-//    //double acceleration = 29.9;
-//
-//    //double drag = dragForce(dragCoe, density, velocity, sArea);
-//    //double area = circleArea(radius);
-//    //double motion = secondNewton(mass, acceleration);
-//
-//    //cout << drag << endl;
-//    //cout << area << endl;
-//    //cout << motion << endl;
-//    
-//
-//    return 0;
-//}
