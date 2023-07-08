@@ -98,7 +98,7 @@ void callBack(const Interface* pUI, void* p)
       pDemo->time = 0.0;
 
 
-   pDemo->bullet.componentX = pDemo->physics.GetHorizantalComponent() / 40;
+   pDemo->bullet.componentX = pDemo->physics.GetHorizontalComponent() / 40;
    pDemo->bullet.componentY = pDemo->physics.GetVerticalComponent() / 40;
 
    pDemo->bullet.updatePosition();
@@ -147,31 +147,28 @@ double Position::metersFromPixels = 40.0;
 #ifdef _WIN32_X
 #include <windows.h>
 int WINAPI wWinMain(
-    _In_ HINSTANCE hInstance,
-    _In_opt_ HINSTANCE hPrevInstance,
-    _In_ PWSTR pCmdLine,
-    _In_ int nCmdShow)
+   _In_ HINSTANCE hInstance,
+   _In_opt_ HINSTANCE hPrevInstance,
+   _In_ PWSTR pCmdLine,
+   _In_ int nCmdShow)
 #else // !_WIN32
 int main(int argc, char** argv)
 #endif // !_WIN32
 {
-    // Initialize OpenGL
-    Position ptUpperRight;
-    ptUpperRight.setPixelsX(700.0);
-    ptUpperRight.setPixelsY(500.0);
-    Position().setZoom(40.0 /* 42 meters equals 1 pixel */);
-    Interface ui(0, NULL,
-        "Demo",   /* name on the window */
-        ptUpperRight);
+   // Initialize OpenGL
+   Position ptUpperRight;
+   ptUpperRight.setPixelsX(700.0);
+   ptUpperRight.setPixelsY(500.0);
+   Position().setZoom(40.0 /* 42 meters equals 1 pixel */);
+   Interface ui(0, NULL,
+       "Demo",   /* name on the window */
+       ptUpperRight);
 
+   // Initialize the demo
+   Demo demo(ptUpperRight);
 
+   // set everything into action
+   ui.run(callBack, &demo);
 
-    // Initialize the demo
-    Demo demo(ptUpperRight);
-
-    // set everything into action
-    ui.run(callBack, &demo);
-
-
-    return 0;
+   return 0;
 }

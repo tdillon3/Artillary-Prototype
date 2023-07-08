@@ -222,4 +222,10 @@ public:
 
         double finalDistance = linearInterpolation(lastAltitude, lastDistance, altitude, distance,  0);
     }
+    double GetHorizontalComponent() {
+        return dx;
+    }
+    double GetVerticalComponent() {
+        return dy;
+    }
 };
