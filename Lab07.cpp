@@ -101,7 +101,7 @@ void callBack(const Interface* pUI, void* p)
    pDemo->bullet.componentX = pDemo->physics.GetHorizantalComponent() / 40;
    pDemo->bullet.componentY = pDemo->physics.GetVerticalComponent() / 40;
 
-   
+   pDemo->bullet.updatePosition();
 
    //
    // perform all the game logic
@@ -113,14 +113,9 @@ void callBack(const Interface* pUI, void* p)
    // move the projectile across the screen
    for (int i = 0; i < 20; i++)
    {
-      // this bullet is moving left at 1 pixel per frame
-      double x = pDemo->projectilePath[i].getPixelsX();
-      x -= 1.0;
-      if (x < 0)
-         x = pDemo->ptUpperRight.getPixelsX();
-      pDemo->projectilePath[i].setPixelsX(x);
+      pDemo->projectilePath[i] = Position(pDemo->bullet.listX[i], pDemo->bullet.listY[i]);
    }
-
+   
    //
    // draw everything
    //

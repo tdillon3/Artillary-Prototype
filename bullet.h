@@ -5,7 +5,7 @@
 #include "ground.h"
 #include "position.h"
 #include "Lab07.cpp"
-#include <queue>
+#include <deque>
 #include "physics.h"
 
 
@@ -16,8 +16,8 @@ class Bullet
 {
 public:
 
-	std::queue<double> listX;
-	std::queue<double> listY;
+	std::deque<double> listX;
+	std::deque<double> listY;
 	double componentX;
 	double componentY;
 	double x = 0.0;
@@ -28,13 +28,13 @@ public:
 		if (listX.size() < 20) {
 			for (int count = 1; count <= 19; count++)
 			{
-				listX.push(0);
-				listY.push(0);
+				listX.push_front(0);
+				listY.push_front(0);
 			}
 			x = howitzer->getMetersX();
 			y = howitzer->getMetersY();
-			listX.push(x);
-			listY.push(y);
+			listX.push_front(x);
+			listY.push_front(y);
 		}
 	}
 
@@ -42,23 +42,23 @@ public:
 	{
 		x = x + componentX;
 
-		listX.pop();
-		listX.push(x);
+		listX.pop_back();
+		listX.push_front(x);
 
 
 		y = y + componentY;
 
-		listY.pop();
-		listY.push(y);
+		listY.pop_back();
+		listY.push_front(y);
 
 		if (y < 0)
 		{
 			for (int count = 0; count < 20; count++)
 			{
-				listX.pop();
-				listX.push(0);
-				listY.pop();
-				listY.push(0);
+				listX.pop_back();
+				listX.push_front(0);
+				listY.pop_back();
+				listY.push_front(0);
 			}
 		}
 	}
