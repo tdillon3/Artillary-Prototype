@@ -40,7 +40,7 @@ public:
       // Generate the ground and set the vertical position of the howitzer.
       ground.reset(ptHowitzer);
 
-      Bullet bullet = Bullet(&ptHowitzer);
+      bullet.newBullet(&ptHowitzer);
 
       // This is to make the bullet travel across the screen. Notice how there are 
       // 20 pixels, each with a different age. This gives the appearance
@@ -52,10 +52,12 @@ public:
       }
    }
 
+   Bullet bullet;
    Ground ground;                 // the ground
    Position  projectilePath[20];  // path of the projectile
    Position  ptHowitzer;          // location of the howitzer
    Position  ptUpperRight;        // size of the screen
+   Physics physics = Physics();
    double angle;                  // angle of the howitzer 
    double time;                   // amount of time since the last firing
 };
@@ -72,6 +74,8 @@ void callBack(const Interface* pUI, void* p)
    // the first step is to cast the void pointer into a game object. This
    // is the first step of every single callback function in OpenGL. 
    Demo* pDemo = (Demo*)p;
+
+
 
    //
    // accept input
@@ -93,6 +97,12 @@ void callBack(const Interface* pUI, void* p)
    if (pUI->isSpace())
       pDemo->time = 0.0;
 
+
+   pDemo->bullet.componentX = pDemo->physics.GetHorizantalComponent() / 40;
+   pDemo->bullet.componentY = pDemo->physics.GetVerticalComponent() / 40;
+
+   pDemo->bullet.updatePosition();
+
    //
    // perform all the game logic
    //
@@ -103,14 +113,9 @@ void callBack(const Interface* pUI, void* p)
    // move the projectile across the screen
    for (int i = 0; i < 20; i++)
    {
-      // this bullet is moving left at 1 pixel per frame
-      double x = pDemo->projectilePath[i].getPixelsX();
-      x -= 1.0;
-      if (x < 0)
-         x = pDemo->ptUpperRight.getPixelsX();
-      pDemo->projectilePath[i].setPixelsX(x);
+      pDemo->projectilePath[i] = Position(pDemo->bullet.listX[i], pDemo->bullet.listY[i]);
    }
-
+   
    //
    // draw everything
    //
