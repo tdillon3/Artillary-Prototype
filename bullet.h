@@ -23,7 +23,7 @@ public:
 	double x = 0.0;
 	double y = 0.0;
 
-	Bullet(Position* howitzer)
+	void newBullet(Position* howitzer)
 	{
 		for (int count = 1; count <= 19; count++)
 		{

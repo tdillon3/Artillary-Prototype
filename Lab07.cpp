@@ -40,7 +40,7 @@ public:
       // Generate the ground and set the vertical position of the howitzer.
       ground.reset(ptHowitzer);
 
-      bullet = Bullet(&ptHowitzer);
+      bullet.newBullet(&ptHowitzer);
 
       // This is to make the bullet travel across the screen. Notice how there are 
       // 20 pixels, each with a different age. This gives the appearance
