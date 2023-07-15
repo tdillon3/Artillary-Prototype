@@ -1,26 +1,34 @@
 
+// Class for managing the Display
 class Display
 {
 public:
-	double altitude;
-	double distance;
-	double time;
-	double speed;
+    // Members for displaying various quantities
+    double altitude;  // The altitude to display
+    double distance;  // The distance to display
+    double time;      // The time to display
+    double speed;     // The speed to display
 
-	void setDisplay(double y, double x, double t)
-	{
-		altitude = y;
-		if (altitude < 0)
-			altitude = 0;
-		distance = x;
-		if (distance < 0)
-			distance = distance * -1;
-		time += t;
-	}
+    // Set the display parameters
+    void setDisplay(double y, double x, double t)
+    {
+        // Set altitude, ensuring it's non-negative
+        altitude = (y < 0) ? 0 : y;
 
-	void calculateOverallSpeed(double dx, double dy)
-	{
-		speed = sqrt(pow(dx, 2) + pow(dy, 2));
-		speed = round(speed * 10) / 10;
-	}
+        // Set distance, ensuring it's non-negative
+        distance = (x < 0) ? -x : x;
+
+        // Increment time
+        time += t;
+    }
+
+    // Calculate the overall speed from the changes in x and y
+    void calculateOverallSpeed(double dx, double dy)
+    {
+        // Compute the speed from the differences in x and y
+        speed = sqrt(pow(dx, 2) + pow(dy, 2));
+
+        // Round the speed to one decimal place
+        speed = round(speed * 10) / 10;
+    }
 };
