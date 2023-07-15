@@ -126,7 +126,7 @@ void callBack(const Interface* pUI, void* p)
            pDemo->projectilePath[0].getPixelsX() <= pDemo->ground.getTarget().getPixelsX() + 5) &&
            pDemo->projectilePath[0].getPixelsY() <= pDemo->ground.getTarget().getPixelsY()) 
        {
-           cout << "YOU HIT THE TARGET!!!!";
+           cout << "YOU HIT THE TARGET!!!!" << endl;
        }
 
        pDemo->isBulletAirborn = pDemo->physics.computeDistance();
