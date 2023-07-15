@@ -8,30 +8,50 @@ using namespace std;
 class Physics
 {
 private:
+    // Displacement in x and y direction
     double dx;
     double dy;
+    // Second derivative of displacement in x and y direction
     double ddx;
     double ddy;
+    // Angle in radians
     double aRadians;
+    // Mass of the object
     double mass = 46.7;
+    // Distance traveled
     double distance = 0;
     double lastDistance;
+    // Altitude or height
     double altitude = 0;
     double lastAltitude;
+    // Time for which the object remains airborne
     double hangTime = 0;
+    // Time step for calculations
     double t = 0.5;
+    // Gravity, will be calculated based on altitude
     double gravity;
+    // Drag force and coefficient
     double drag;
     double dragCoefficient;
+    // Air density, will be calculated based on altitude
     double airDensity;
+    // Drag components in x and y direction
     double dragY;
     double dragX;
+    // Radius of the object
     double radius = 0.077445;
+    // Total velocity of the object
     double totalVelocity;
+    // Mach number, will be calculated based on altitude and velocity
     double mach;
+    // Velocity in terms of Mach number
     double speedRelativeToMach;
+    // Surface area of the object
     double surfaceArea = calculateAreaOfCircle(radius);
+    // Ground information
     Ground* ground;
+    // Predefined data for drag coefficient, speed of sound, air density and gravity
+    // Based on altitude and/or Mach number
     vector<vector<double>> dragCoefficentList = 
     { 
         {0.3, 0.1629}, {0.5, 0.1659}, {0.7, 0.2031}, {0.89, 0.2597}, {0.92, 0.3010}, {0.96, 0.3287}, {0.980, 0.4002}, {1.0, 0.4258}, 
